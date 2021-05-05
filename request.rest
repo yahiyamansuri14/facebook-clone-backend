@@ -1,0 +1,17 @@
+GET http://localhost:3300/user/testjwt
+
+###
+POST http://localhost:3300/user/testjwt
+Content-Type: application/json
+
+{
+    "username":"yahiya"
+}
+
+###
+POST http://localhost:3300/user/login
+Content-Type: application/json
+{
+    "userLogin":"en19ca501114@medicaps.ac.in",
+    "pwd":"yahiya1998"
+}
