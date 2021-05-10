@@ -9,6 +9,7 @@ let checkToken = async ( req, res, next ) =>{
     }catch(e){
         return res.send({status:"OK", message:"Invalid Authentications Token...",data:[]})
     }
+    /* console.log(req.decoded.id) */
     next()
 }
 
