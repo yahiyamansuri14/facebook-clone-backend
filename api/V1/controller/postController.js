@@ -57,4 +57,16 @@ let addLike = async (req, res) =>{
         }
 }
 
-module.exports = { savePost, getAllPost, addLike, getAllPostByUserId }
+let deletePostById = async (req,res) => {
+     let { id } = req.params
+     let user_id = req.decoded._id
+     try{
+         let data = await postModel.deleteOne({_id:id,user_id})
+         console.log(data)
+         return res.send({ status:"OK", message:"post deleted"})
+     }catch(e){
+         return res.send({status:"ERR", message:"there is some error try letter"})
+     }
+}
+
+module.exports = { savePost, getAllPost, addLike, getAllPostByUserId, deletePostById }
