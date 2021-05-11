@@ -118,8 +118,40 @@ let sentFriendRequest = async ( req,res ) =>{
 let acceptFriendRequest = async (req,res) =>{
     let receiver_id = req.decoded.id
     let sender_id =  req.params.id
-    console.log(sender_id, receiver_id)
-    res.send('ok')
+    console.log('sender id', sender_id)
+    console.log('receiver id', receiver_id)
+    //check if its first friend request then make and friend array and push data
+    let data = await FriendModel.findOne({user_id:receiver_id})
+    if ( data == null){
+        //its first friend we are adding to list
+        let friends = []
+        friends.push( sender_id )
+        console.log('first time',friends)
+        let newFriend = new FriendModel( {user_id:receiver_id, friends})
+        newFriend.save()
+                    .then( async data=>{
+                        //console.log(data)
+                        await LookupFriendModel.findOneAndDelete({sender_id,receiver_id})
+                        res.send( {status:'OK', message:"added to friend list", data:[data] })
+                    })
+                    .catch( err=>{
+                        console.log(err)
+                        res.send( {status:"ERR", message:"failed to add frined try letter", data:[data]})
+                    })
+    }else{
+        //its not first time request so get the data and then update the data
+          console.log('b/w first and second',data.friends)
+          data.friends.push( sender_id )
+          console.log('second time',data.friends)
+          try{
+            let new_data = await FriendModel.findOneAndUpdate({user_id:receiver_id}, data)
+            return res.send( {status:"OK", message:"addedd to friend lis(in else)", data:[new_data]})
+          }catch(e){
+              console.log(e)
+            return res.send( {status:"ERR", message:"failed to add friend list(in else)", data:[data]})
+          }      
+    }
+    
 }
 
 let showFriendRequest = async (req,res) =>{

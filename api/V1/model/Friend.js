@@ -2,8 +2,8 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const friendSchema = new Schema({
-        sender_id:String,
-        receiver_id:String
+        user_id:String,
+        friends:Array
 })
 
 FriendModel = mongoose.model('friend', friendSchema)
