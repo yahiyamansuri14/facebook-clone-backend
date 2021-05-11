@@ -82,9 +82,6 @@ let getUserProfile = (req, res) => {
     let { id } = req.params
     UserModel.findOne({ _id: id })
         .then(dbData => {
-            /* console.log(delete data['pwd'])
-            console.log(data) */
-            //  console.log(data)
             let { _id, firstName, lastName, userLogin, gender, dob } = dbData
             let user = { _id, firstName, lastName, userLogin, gender, dob }
             console.log(user)
@@ -96,86 +93,47 @@ let getUserProfile = (req, res) => {
         })
 }
 
-let accepFriendRequest = (req, res) => {
-    let sender_id = req.params.id
+let sentFriendRequest = async ( req,res ) =>{
+     let sender_id = req.decoded.id
+     let receiver_id = req.params.id
+     console.log(sender_id, receiver_id)
+     let result = await FriendHelper.checkInLookupFriend(sender_id, receiver_id)
+     console.log('22222222222222222',result)
+     if ( !result ){
+        let newRequest = new LookupFriendModel({sender_id, receiver_id})
+        newRequest.save()
+                    .then(data=>{
+                        console.log(data)
+                        res.send({status:"OK", message:"Request Sent Successfully..."})
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.send({ status:"ERR", message:"Request Failed"})
+                    })
+    }else{
+        res.send({status:"ERR", message:"Friend Request Already Sent"})
+    }
+}
+
+let acceptFriendRequest = async (req,res) =>{
     let receiver_id = req.decoded.id
+    let sender_id =  req.params.id
     console.log(sender_id, receiver_id)
-    if (FriendHelper.checkInLookupFriend(sender_id, receiver_id)) {
-        if (FriendHelper.deleteFromLookupDocument(sender_id, receiver_id)) {
-            let newFriend = new FriendModel({ sender_id, receiver_id })
-            newFriend.save()
-                .then(data => {
-                    if (data != null)
-                        res.send({ status: "OK", message: "Friend Request Accept" })
-                    else
-                        res.send({ status: "ERR", message: "There is some problem,pls try after some time" })
-                })
-                .catch(err => {
-                    res.send({ status: "ERR", message: "There is some problem,pls try after some time" })
-                })
-        } else {
-            res.send({ status: "ERR", message: "There is some problem,pls try after some time" })
-        }
-    } else {
-        res.send({ status: "ERR", message: "There is some problem,pls try after some time" })
-    }
-
-}
-/* let sentFriendRequest = (req, res) => {
-    let { id } = req.params
-    let sender_id = req.decoded.id
-    console.log(id,sender_id)
-    console.log(FriendHelper.checkInLookupFriend(sender_id, id))
-    if ( !FriendHelper.checkInLookupFriend(sender_id, id)) {
-        let newFriendLookup = new LookupFriendModel({ sender_id, receiver_id: id })
-        newFriendLookup.save()
-            .then(data => {
-                if (data != null)
-                    res.send({ status: "OK", message: "Friend Request Sent" })
-                else
-                    res.send({ status: "ERR", message: "There is some problem,pls try after some time" })
-            })
-            .catch(err => {
-                res.send({ status: "ERR", message: "There is some problem,pls try after some time" })
-            })
-    } else {
-        res.send({ status: "ERR", message: "No Friend Request Sent" })
-    }
-
-} */
-
-let sentFriendRequest = async (req, res) => {
-    let { id } = req.params
-    let user_id = req.decoded.id
-
-    let data = await LookupFriendModel.findOne({ user_id })
-    /* console.log(data) */
-    if (data == null) {
-        //its first time create an array and push id int it and save it 
-        const friends = []
-        friends.push(id)
-        let newLookUpFriend = new LookupFriendModel({ user_id, friends })
-        newLookUpFriend.save()
-            .then(data => {
-                console.log(data)
-                res.send({ status: "OK", message: "Friend Request Sent" })
-            })
-            .catch(err => {
-                console.log(err)
-                res.send({ status: "ERR", message: "There is some error, pls try again letter" })
-            })
-    } else {
-        //its not hte first time, get array of friends push id in it and update that document
-        /* const friends = data.friends */
-        data.friends.push(id)
-        console.log(data.friends)
-        try {
-            let dbData = await LookupFriendModel.findOneAndUpdate({ user_id }, data)
-            res.send({status:"OK", message:"Friend Request Sent..."})
-        } catch (e) {
-            res.send({status:"ERR", message:"There is some error, pls try again letter"})
-        }
-    }
+    res.send('ok')
 }
 
-module.exports = { login, register, sentOtp, getUserProfile, accepFriendRequest, sentFriendRequest }
+let showFriendRequest = async (req,res) =>{
+    let receiver_id = req.decoded.id
+    console.log(receiver_id)
+    LookupFriendModel.find({receiver_id})
+                        .then(data =>{
+                            console.log(data)
+                            res.send({ status:"OK", message:"success", data:[data]})
+                        })
+                        .catch(err =>{
+                            console.log(err)
+                            res.send({ status:"ERR", message:"failed", data:[]})
+                        })
+    
+}
+module.exports = { login, register, sentOtp, getUserProfile, sentFriendRequest, acceptFriendRequest, showFriendRequest }

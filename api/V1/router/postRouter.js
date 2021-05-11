@@ -8,4 +8,5 @@ postRouter.post('/savepost', authMiddleware.checkToken, postController.savePost)
 postRouter.post('/getallpost', authMiddleware.checkToken, postController.getAllPost)
 postRouter.post('/like/:id', authMiddleware.checkToken, postController.addLike)
 postRouter.post('/getallpostbyid/:id', authMiddleware.checkToken, postController.getAllPostByUserId)
+postRouter.post('/deletepostbyid/:id', authMiddleware.checkToken, postController.deletePostById)
 module.exports = postRouter

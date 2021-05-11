@@ -1,9 +1,9 @@
 const LookupFriendModel = require('../model/LookupFriend')
-let checkInLookupFriend = (sender_id, receiver_id) => {
+let checkInLookupFriend = async (sender_id, receiver_id) => {
     try{
-        let data = LookupFriendModel.findOne({sender_id,receiver_id})
-        console.log(data)
-        if ( data != null && data != undefined){
+        let data = await LookupFriendModel.findOne({sender_id,receiver_id})
+        console.log('111111111111111111',data)
+        if ( data != null){
             return true
         }else{
             return false

@@ -21,7 +21,6 @@ let uploadFile = async (fileData) => {
         Body: uploadFileContent,
         ACL:'public-read'
     }
- 
     resToSent = await s3.upload(params).promise()
     return resToSent.Location
   

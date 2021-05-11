@@ -11,7 +11,9 @@ router.post('/login', userController.login)
 //get user profile api
 router.post('/getuserprofile/:id', authMiddleWare.checkToken, userController.getUserProfile)
 //accept friend request
-router.post('/acceptrequest/:id', authMiddleWare.checkToken, userController.accepFriendRequest)
+router.post('/acceptrequest/:id', authMiddleWare.checkToken, userController.acceptFriendRequest)
 //sent friend request
 router.post('/sendfriendrequest/:id', authMiddleWare.checkToken, userController.sentFriendRequest)
+//show friend request
+router.post('/showfriendrequest', authMiddleWare.checkToken, userController.showFriendRequest)
 module.exports = router
