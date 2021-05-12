@@ -7,7 +7,9 @@ const postSchema = new Schema({
     dislikes:Number,
     user_id:String,
     visibility:String,
-    fileUrl:String
+    fileUrl:String,
+    likes_person:Array,
+    dislike_person:Array
 },{timestamps:true})
 
 const postModel = mongoose.model('Post', postSchema)

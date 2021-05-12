@@ -6,7 +6,9 @@ const authMiddleware = require('../middleware/Auth')
 postRouter.post('/savepost', authMiddleware.checkToken, postController.savePost)
 //get all the posts for the feed page
 postRouter.post('/getallpost', authMiddleware.checkToken, postController.getAllPost)
-postRouter.post('/like/:id', authMiddleware.checkToken, postController.addLike)
 postRouter.post('/getallpostbyid/:id', authMiddleware.checkToken, postController.getAllPostByUserId)
 postRouter.post('/deletepostbyid/:id', authMiddleware.checkToken, postController.deletePostById)
+postRouter.post('/likepost/:id', authMiddleware.checkToken, postController.likePost)
+
+
 module.exports = postRouter

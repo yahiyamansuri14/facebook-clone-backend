@@ -145,6 +145,7 @@ let acceptFriendRequest = async (req,res) =>{
           console.log('second time',data.friends)
           try{
             let new_data = await FriendModel.findOneAndUpdate({user_id:receiver_id}, data)
+            await LookupFriendModel.findOneAndDelete({sender_id,receiver_id})
             return res.send( {status:"OK", message:"addedd to friend lis(in else)", data:[new_data]})
           }catch(e){
               console.log(e)
@@ -168,4 +169,8 @@ let showFriendRequest = async (req,res) =>{
                         })
     
 }
+
+
+
+
 module.exports = { login, register, sentOtp, getUserProfile, sentFriendRequest, acceptFriendRequest, showFriendRequest }
