@@ -121,4 +121,70 @@ let likePost = async (req, res) => {
     }
 
 }
-module.exports = { savePost, getAllPost, getAllPostByUserId, deletePostById, likePost }
+
+let dislikePost = async (req, res) => {
+    let { id } = req.params
+    let user_id = req.decoded.id
+    //find if user already liked post or not if yes then do not increment the value of like
+    let post = await postModel.findOne({ _id: id })
+    let dislike_person = post.dislike_person
+    let dislikes = post.dislikes
+    //if likes is 0 means its the first like , create an array of likes_person add this user id in it
+    console.log(dislike_person)
+    console.log(dislikes)
+    if (dislikes == 0) {
+        dislike_person.push(user_id)
+        dislikes = parseInt(dislikes + 1)
+        await postModel.update(
+            { _id: id },
+            {
+                $set: {
+                    dislikes: dislikes,
+                    dislike_person: dislike_person
+                }
+            }).then(data => {
+                //ask sir why data is different 
+                res.send({ status: "OK", message: "Success", data: [data] })
+            }).catch(err => {
+                console.log(err)
+                res.send({ status: "ERR", message: "try again letter", data: [] })
+            })
+    } else {
+        //if likes is not equal to zero it means it's not the first like so get the likes_person array 
+        //find if the user already likes post if yes then do not increase the like...
+        //if user doesn't liked the post already then increate the like by one
+
+
+        //check if user has already likes post or not if yes then do nothing just send already liked in response
+        let result = dislike_person.filter(element => {
+            //console.log('in filter',element)
+            if (element == user_id)
+                return element
+        })
+        if (result.length > 0) {
+            //user already liked post
+            res.send({ status: "OK", message: "post already disliked" })
+        } else {
+            //post is not liked 
+            //push user_id in likes_person array and increase like by one
+            dislike_person.push(user_id)
+            dislikes = parseInt(dislikes + 1)
+            await postModel.update(
+                { _id: id },
+                {
+                    $set: {
+                        dislikes: dislikes,
+                        dislike_person: dislike_person
+                    }
+                }).then(data => {
+                    //ask sir why data is different 
+                    res.send({ status: "OK", message: "Success", data: [data] })
+                }).catch(err => {
+                    console.log(err)
+                    res.send({ status: "ERR", message: "try again letter", data: [] })
+                })
+
+        }
+    }
+}
+module.exports = { savePost, getAllPost, getAllPostByUserId, deletePostById, likePost, dislikePost }

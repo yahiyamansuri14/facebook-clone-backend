@@ -9,6 +9,6 @@ postRouter.post('/getallpost', authMiddleware.checkToken, postController.getAllP
 postRouter.post('/getallpostbyid/:id', authMiddleware.checkToken, postController.getAllPostByUserId)
 postRouter.post('/deletepostbyid/:id', authMiddleware.checkToken, postController.deletePostById)
 postRouter.post('/likepost/:id', authMiddleware.checkToken, postController.likePost)
-
+postRouter.post('/dislikepost/:id', authMiddleware.checkToken, postController.dislikePost)
 
 module.exports = postRouter
